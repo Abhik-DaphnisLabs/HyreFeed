@@ -1,3 +1,5 @@
+const { response } = require("express")
+
 module.exports = (db) => {
   const user = db.user,
         userCertification = db.userCertification,
@@ -11,36 +13,36 @@ module.exports = (db) => {
   userController.getDetails = async function (userID){
     try{
       const userData = await user.findByPk(userID)
-      const certification = await userCertification.findAll({
-        where: {
-          user_id: userID
-        }
-      })
-      const education = await userEducation.findAll({
-        where: {
-          user_id: userID
-        }
-      })
-      const professionalDetails = await userProfessionalDetail.findAll({
-        where: {
-          user_id: userID
-        }
-      })
-      const skills = await userSkill.findAll({
-        where: {
-          user_id: userID
-        }
-      })
+      // const certification = await userCertification.findAll({
+      //   where: {
+      //     user_id: userID
+      //   }
+      // })
+      // const education = await userEducation.findAll({
+      //   where: {
+      //     user_id: userID
+      //   }
+      // })
+      // const professionalDetails = await userProfessionalDetail.findAll({
+      //   where: {
+      //     user_id: userID
+      //   }
+      // })
+      // const skills = await userSkill.findAll({
+      //   where: {
+      //     user_id: userID
+      //   }
+      // })
 
       if(!userData)
         throw new Error("Invalid Primary Key!")
       return {
         success: true,
         user: userData,
-        education: education,
-        professionalDetails, professionalDetails,
-        skills: skills,
-        certification: certification
+        // education: education,
+        // professionalDetails, professionalDetails,
+        // skills: skills,
+        // certification: certification
       }
     } catch(err) {
       return {
@@ -73,49 +75,54 @@ module.exports = (db) => {
       functionalArea: body.functionalArea,
       noticePeriod: body.noticePeriod,
       experience: body.experience,
+      skills: body.skills,
+      educations: body.educations,
+      certifications: body.certifications,
+      professionalDetails: body.professionalDetails,
     }
 
-    const educations = body.educations;
-    const certifications = body.certifications;
-    const professionalDetails = body.professionalDetails;
-    const skills = body.skills;
+    // const educations = body.educations;
+    // const certifications = body.certifications;
+    // const professionalDetails = body.professionalDetails;
+    // const skills = body.skills;
 
     try{
-      let respone = await user.update(userDetails, {
+      let response = await user.update(userDetails, {
         where: {
           id: userID
         }
       })
-      if(educations){
-        educations.forEach(async (education) => {
-          education.user_id = userID
-          await userEducation.create(education)
-        })
-      }
-      if(certifications){
-        certifications.forEach(async (certification) => {
-          certification.user_id = userID
-          await userCertification.create(certification)
-        })
-      }
-      if(professionalDetails){
-        professionalDetails.forEach(async (professionalDetail) => {
-          professionalDetail.user_id = userID
-          await userProfessionalDetail.create(professionalDetail)
-        })
-      }
-      if(skills){
-        skills.forEach(async (skill) => {
-          let newSkill = {
-            user_id: userID,
-            name: skill
-          }
-          await userSkill.create(newSkill)
-        })
-      }
+      // if(educations){
+      //   educations.forEach(async (education) => {
+      //     education.user_id = userID
+      //     await userEducation.create(education)
+      //   })
+      // }
+      // if(certifications){
+      //   certifications.forEach(async (certification) => {
+      //     certification.user_id = userID
+      //     await userCertification.create(certification)
+      //   })
+      // }
+      // if(professionalDetails){
+      //   professionalDetails.forEach(async (professionalDetail) => {
+      //     professionalDetail.user_id = userID
+      //     await userProfessionalDetail.create(professionalDetail)
+      //   })
+      // }
+      // if(skills){
+      //   skills.forEach(async (skill) => {
+      //     let newSkill = {
+      //       user_id: userID,
+      //       name: skill
+      //     }
+      //     await userSkill.create(newSkill)
+      //   })
+      // }
       return {
         success: true,
-        message: "Profile Successfully Updated!"
+        message: "Profile Successfully Updated!",
+        response: response
       }
     } catch(err) {
       return {

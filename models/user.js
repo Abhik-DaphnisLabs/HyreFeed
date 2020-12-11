@@ -58,7 +58,7 @@ module.exports = (sequelize) => {
           type: DataTypes.STRING(31),
       },
       address: {
-          type: DataTypes.JSON,
+          type: DataTypes.JSONB,
       },
       pincode: {
           type: DataTypes.STRING(15),
@@ -94,7 +94,18 @@ module.exports = (sequelize) => {
       experience: {
         type: DataTypes.STRING
       },
-    
+      skills: {
+        type: DataTypes.ARRAY(DataTypes.STRING)
+      },
+      educations: {
+        type: DataTypes.ARRAY(DataTypes.JSON)
+      },
+      certifications: {
+        type: DataTypes.ARRAY(DataTypes.JSON)
+      },
+      professionalDetails: {
+        type: DataTypes.ARRAY(DataTypes.JSON)
+      },
       others: {
           type: DataTypes.JSONB
       }

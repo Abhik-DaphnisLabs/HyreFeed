@@ -2,7 +2,24 @@ require('dotenv').config()
 
 //POSTGRES Config
 const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize(process.env.POSTGRES_URI) // Example for postgres
+// const sequelize = new Sequelize(process.env.POSTGRES_URI) // Example for postgres
+// const sequelize = new Sequelize(process.env.DATABASE_URL+"?ssl=true") // Example for postgres
+
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  host: process.env.host,
+  database: process.env.dbname,
+  username: process.env.username,
+  user: process.env.username,
+  password: process.env.password,
+  port: process.env.port,
+  dialect: 'postgres',/* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+    }
+  },
+});
 
 Promise.resolve(sequelize.authenticate()).then( () => {
   console.log('Connection has been established successfully.');
@@ -13,11 +30,11 @@ Promise.resolve(sequelize.authenticate()).then( () => {
 //DATABASE
 const db = {
   user: require("./models/user")(sequelize),
-  userCertification: require("./models/userCertification")(sequelize),
-  userEducation: require("./models/userEducation")(sequelize),
+  // userCertification: require("./models/userCertification")(sequelize),
+  // userEducation: require("./models/userEducation")(sequelize),
   userFilter: require("./models/userFilter")(sequelize),
-  userProfessionalDetail: require("./models/userProfessionalDetail")(sequelize),
-  userSkill: require("./models/userSkill")(sequelize),
+  // userProfessionalDetail: require("./models/userProfessionalDetail")(sequelize),
+  // userSkill: require("./models/userSkill")(sequelize),
   skill: require("./models/skill")(sequelize),
   category: require("./models/category")(sequelize),
 }
@@ -71,7 +88,7 @@ passport.deserializeUser(db.user.deserializeUser())
 
 const syncDB = async () => {
   await sequelize.authenticate()
-  await sequelize.sync()
+  await sequelize.sync(/*{force:true}*/)
   // await db.user.create({email: 'test5@gd'})
 }
 

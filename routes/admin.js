@@ -21,7 +21,7 @@ module.exports = (db) => {
   const middleware = require("../middleware")(db)
   const adminController = require("../controllers/admin")(db)
 
-  router.post("/register", middleware.isLoggedIn, function(req, res){
+  router.post("/register", function(req, res){
     // console.log(req.body)
     const newUser = {
       email: req.body.email,

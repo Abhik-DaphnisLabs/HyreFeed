@@ -11,7 +11,7 @@ module.exports = (db) => {
         where: {
           name: 
           {
-            [Op.like] : query+"%",
+            [Op.iLike] : query+"%",
           },
           category: category
         }
