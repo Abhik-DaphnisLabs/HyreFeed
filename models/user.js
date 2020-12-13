@@ -54,6 +54,10 @@ module.exports = (sequelize) => {
           type: DataTypes.INTEGER,
           defaultValue: 0
       },
+      shortListedCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+      },
       city: {
           type: DataTypes.STRING(31),
       },

@@ -1,132 +1,131 @@
+
 module.exports = (db) => {
-  const user = db.user,
-        userCertification = db.userCertification,
-        userEducation = db.userEducation,
+  const User = db.user,
         userFilter = db.userFilter,
-        userProfessionalDetail = db.userProfessionalDetail,
-        userSkill = db.userSkill
+        Skill = db.skill,
+        Category = db.category,
+        Job = db.job,
+        JobVideo = db.jobVideo,
+        AppliedJob = db.appliedJob
 
   let jobController = {}
 
-  jobController.getJob = async function (userID){
-    try{
-      const userData = await user.findByPk(userID)
-      const certification = await userCertification.findAll({
-        where: {
-          user_id: userID
-        }
+  jobController.getAllJobs = async function(req, res, next){
+    try {
+      let filter = {}
+      if(req.query.category){
+        filter.category = req.query.category
+      }
+      if(req.query.city){
+        filter.city = req.query.city
+      }
+      if(req.query.type){
+        filter.type = req.query.type
+      }
+      if(req.query.skill){
+        filter.skill = req.query.skill
+      }
+      if(req.query.tool){
+        filter.tool = req.query.tool
+      }
+      let jobs = await Job.findAll({
+        where: filter
       })
-      const education = await userEducation.findAll({
-        where: {
-          user_id: userID
-        }
-      })
-      const professionalDetails = await userProfessionalDetail.findAll({
-        where: {
-          user_id: userID
-        }
-      })
-      const skills = await userSkill.findAll({
-        where: {
-          user_id: userID
-        }
-      })
-
-      if(!userData)
-        throw new Error("Invalid Primary Key!")
-      return {
+      res.json({
         success: true,
-        user: userData,
-        education: education,
-        professionalDetails, professionalDetails,
-        skills: skills,
-        certification: certification
-      }
-    } catch(err) {
-      return {
+        jobs: jobs
+      })
+    } catch (error) {
+      res.json({
         success: false,
-        message: "Error Occured!",
-        error: err
-      }
+        error: error
+      })
+    }
+  }
+  jobController.getJob = async function(req, res, next){
+    try {
+      let job = await Job.findByPk(req.params.id)
+      res.json({
+        success: true,
+        job: job
+      })
+    } catch (error) {
+      res.json({
+        success: false,
+        error: error
+      })
     }
   }
 
-  jobController.insertDetails = async function (userID, body, file){
-    console.log(userID, body, file)
-    const userDetails = {
-      firstName: body.firstName,
-      lastName: body.lastName,
-      contactNumber: body.contactNumber,
-      dateOfBirth: new Date(body.dateOfBirth),
-      gender: body.gender,
-      resume: file['resume'][0].filename,
-      profileImage: file['profileImage'][0].filename,
-      address: body.address,
-      pincode: body.pincode,
-      city: body.city,
-      annualSalary: body.annualSalary,
-      hideSalary: body.hideSalary,
-      expectedSalary: body.expectedSalary,
-      salaryNegotiable: body.salaryNegotiable,
-      tagline: body.tagline,
-      industry: body.industry,
-      functionalArea: body.functionalArea,
-      noticePeriod: body.noticePeriod,
-      experience: body.experience,
-    }
-
-    const educations = body.educations;
-    const certifications = body.certifications;
-    const professionalDetails = body.professionalDetails;
-    const skills = body.skills;
-
-    try{
-      let respone = await user.update(userDetails, {
-        where: {
-          id: userID
-        }
-      })
-      if(educations){
-        educations.forEach(async (education) => {
-          education.user_id = userID
-          await userEducation.create(education)
-        })
-      }
-      if(certifications){
-        certifications.forEach(async (certification) => {
-          certification.user_id = userID
-          await userCertification.create(certification)
-        })
-      }
-      if(professionalDetails){
-        professionalDetails.forEach(async (professionalDetail) => {
-          professionalDetail.user_id = userID
-          await userProfessionalDetail.create(professionalDetail)
-        })
-      }
-      if(skills){
-        skills.forEach(async (skill) => {
-          let newSkill = {
-            user_id: userID,
-            name: skill
-          }
-          await userSkill.create(newSkill)
-        })
-      }
-      return {
+  jobController.getVideo = async function(req, res, next){
+    try {
+      let jobVideo = await JobVideo.findByPk(req.query.videoID)
+      res.json({
         success: true,
-        message: "Profile Successfully Updated!"
-      }
-    } catch(err) {
-      return {
+        jobVideo: jobVideo
+      })
+    } catch (error) {
+      res.json({
         success: false,
-        message: "Error Occured!",
-        error: err
-      }
+        error: error
+      })
     }
   }
 
-  
+  jobController.setApplication = async function(req, res, next){
+    try{
+      let answers = []
+      req.body.answers.forEach(answer => {
+        let newAnswer = {
+          question: answer.question,
+          questionType: answer.questionType
+        }
+        if(answer.questionType == '3'){              //Audio File
+          let file = req.files.find(file => {
+            return file.fieldname == answer.id
+          })
+          newAnswer.answer = file.filename
+        } else {
+          newAnswer.answer = answer.answer
+        }
+        answers.push(newAnswer)
+      })
+
+      let newApplication = {
+        user_id : req.user.id,
+        job_id : req.params.id,
+        answers: answers
+      }
+
+      let appliedJob = AppliedJob.create(newApplication)
+
+      await User.increment('applicationCount', {
+        where: {
+          id: req.user.id
+        }
+      })
+
+      await Job.increment('numberOfApplicants', {
+        where: {
+          id: req.params.id
+        }
+      })
+
+      res.json({
+        success: true,
+        appliedJob: appliedJob
+      })
+
+    } catch (error) {
+      // console.trace()
+      res.json({
+        success: false,
+        error: error
+      })
+    }
+  }
+
+
 
   
   return jobController;

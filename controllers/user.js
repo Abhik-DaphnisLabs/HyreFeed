@@ -1,48 +1,23 @@
 const { response } = require("express")
 
 module.exports = (db) => {
-  const user = db.user,
-        userCertification = db.userCertification,
-        userEducation = db.userEducation,
-        userFilter = db.userFilter,
-        userProfessionalDetail = db.userProfessionalDetail,
-        userSkill = db.userSkill
+  const User = db.user,
+        UserFilter = db.userFilter,
+        AppliedJob = db.appliedJob,
+        BookmarkedJob = db.bookmarkedJob
 
   let userController = {}
 
   userController.getDetails = async function (userID){
     try{
-      const userData = await user.findByPk(userID)
-      // const certification = await userCertification.findAll({
-      //   where: {
-      //     user_id: userID
-      //   }
-      // })
-      // const education = await userEducation.findAll({
-      //   where: {
-      //     user_id: userID
-      //   }
-      // })
-      // const professionalDetails = await userProfessionalDetail.findAll({
-      //   where: {
-      //     user_id: userID
-      //   }
-      // })
-      // const skills = await userSkill.findAll({
-      //   where: {
-      //     user_id: userID
-      //   }
-      // })
-
+      const userData = await User.findByPk(userID)
+     
       if(!userData)
         throw new Error("Invalid Primary Key!")
       return {
         success: true,
         user: userData,
-        // education: education,
-        // professionalDetails, professionalDetails,
-        // skills: skills,
-        // certification: certification
+        
       }
     } catch(err) {
       return {
@@ -54,7 +29,7 @@ module.exports = (db) => {
   }
 
   userController.insertDetails = async function (userID, body, file){
-    console.log(userID, body, file)
+    // console.log(userID, body, file)
     const userDetails = {
       firstName: body.firstName,
       lastName: body.lastName,
@@ -81,44 +56,12 @@ module.exports = (db) => {
       professionalDetails: body.professionalDetails,
     }
 
-    // const educations = body.educations;
-    // const certifications = body.certifications;
-    // const professionalDetails = body.professionalDetails;
-    // const skills = body.skills;
-
     try{
-      let response = await user.update(userDetails, {
+      let response = await User.update(userDetails, {
         where: {
           id: userID
         }
       })
-      // if(educations){
-      //   educations.forEach(async (education) => {
-      //     education.user_id = userID
-      //     await userEducation.create(education)
-      //   })
-      // }
-      // if(certifications){
-      //   certifications.forEach(async (certification) => {
-      //     certification.user_id = userID
-      //     await userCertification.create(certification)
-      //   })
-      // }
-      // if(professionalDetails){
-      //   professionalDetails.forEach(async (professionalDetail) => {
-      //     professionalDetail.user_id = userID
-      //     await userProfessionalDetail.create(professionalDetail)
-      //   })
-      // }
-      // if(skills){
-      //   skills.forEach(async (skill) => {
-      //     let newSkill = {
-      //       user_id: userID,
-      //       name: skill
-      //     }
-      //     await userSkill.create(newSkill)
-      //   })
-      // }
       return {
         success: true,
         message: "Profile Successfully Updated!",
@@ -130,6 +73,82 @@ module.exports = (db) => {
         message: "Error Occured!",
         error: err
       }
+    }
+  }
+
+  userController.addBookmark = async function (req, res, next) {
+    try {
+      await BookmarkedJob.create({
+        user_id: req.user.id,
+        job_id: req.query.jobID
+      })
+      res.json({
+        success: true
+      })
+    } catch (error) {
+      // console.trace()
+      res.json({
+        success: false,
+        error: error
+      })
+    }
+  }
+  userController.getBookmarks = async function (req, res, next) {
+    try {
+      let bookmarks = await BookmarkedJob.findAll({
+        where: {
+          user_id: req.user.id
+        }
+      })
+      res.json({
+        success: true,
+        bookmarks: bookmarks
+      })
+    } catch (error) {
+      // console.trace()
+      res.json({
+        success: false,
+        error: error
+      })
+    }
+  }
+  userController.deleteBookmark = async function (req, res, next) {
+    try {
+      await BookmarkedJob.destroy({
+        where: {
+          user_id: req.user.id,
+          job_id: req.query.jobID
+        }
+      })
+      res.json({
+        success: true
+      })
+    } catch (error) {
+      // console.trace()
+      res.json({
+        success: false,
+        error: error
+      })
+    }
+  }
+
+  userController.getAppliedList = async function (req, res, next) {
+    try {
+      let appliedJobs = await AppliedJob.findAll({
+        where: {
+          user_id: req.user.id
+        }
+      })
+      res.json({
+        success: true,
+        appliedJobs: appliedJobs
+      })
+    } catch (error) {
+      // console.trace()
+      res.json({
+        success: false,
+        error: error
+      })
     }
   }
 

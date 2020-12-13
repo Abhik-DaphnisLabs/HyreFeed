@@ -71,6 +71,15 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING
       },
       replacementPeriod: {
+        type: DataTypes.INTEGER
+      },
+      category: {
+        type: DataTypes.STRING
+      },
+      industry: {
+        type: DataTypes.STRING
+      },
+      image: {
         type: DataTypes.STRING
       },
       type: {
@@ -80,9 +89,22 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
 
         reference: {
-          model: 'Video',
+          model: 'JobVideo',
           key: 'id'
         }
+      },
+      numberOfApplicants: {
+        type: DataTypes.INTEGER,
+        default: 0
+      },
+      status: {
+        type: DataTypes.INTEGER,
+        default: 0
+        //1. Shared 2. Live 3. Closed
+      },
+      closeDate: {
+        type: DataTypes.DATE,
+        default: Date.now()+2592000000
       },
       others: {
           type: DataTypes.JSONB

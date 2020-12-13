@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  const BookmarkedJob = sequelize.define("BookmarkedJob", {
+  const AppliedJob = sequelize.define("AppliedJob", {
       id: {
           autoIncrement: true,
           primaryKey: true,
@@ -24,14 +24,18 @@ module.exports = (sequelize) => {
         }
       },
       stage: {
-        type: DataTypes.INTEGER     //1: Applied 2: Under Review 3: Shortlisted 4: Accepted/rejected
+        type: DataTypes.INTEGER,     //1: Applied 2: Under Review 3: Shortlisted 4: Accepted/rejected
+        default: 1
       },
       rejected: {
         type: DataTypes.BOOLEAN,
         default: false
+      },
+      answers: {
+        type: DataTypes.ARRAY(DataTypes.JSON)
       }
   });
   
 
-  return BookmarkedJob;
+  return AppliedJob;
 };

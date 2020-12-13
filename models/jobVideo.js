@@ -28,6 +28,9 @@ module.exports = (sequelize) => {
       question: {
         type: DataTypes.STRING
       },
+      mcqOptions: {
+        type: DataTypes.ARRAY(DataTypes.JSON)
+      },
       nextVideo_id: {
         type: DataTypes.INTEGER,
         //Video, If questionType = 0, 2 or 3

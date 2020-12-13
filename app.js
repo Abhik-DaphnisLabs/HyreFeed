@@ -19,6 +19,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
       rejectUnauthorized: false // <<<<<<< YOU NEED THIS
     }
   },
+  logging: false
 });
 
 Promise.resolve(sequelize.authenticate()).then( () => {
@@ -30,6 +31,9 @@ Promise.resolve(sequelize.authenticate()).then( () => {
 //DATABASE
 const db = {
   user: require("./models/user")(sequelize),
+  job: require("./models/job")(sequelize),
+  jobVideo: require("./models/jobVideo")(sequelize),
+  appliedJob: require("./models/appliedJob")(sequelize),
   // userCertification: require("./models/userCertification")(sequelize),
   // userEducation: require("./models/userEducation")(sequelize),
   userFilter: require("./models/userFilter")(sequelize),
@@ -87,8 +91,16 @@ passport.deserializeUser(db.user.deserializeUser())
 
 
 const syncDB = async () => {
+  let isForced = false
   await sequelize.authenticate()
-  await sequelize.sync(/*{force:true}*/)
+  await sequelize.sync({force:isForced})
+  // if(isForced){
+  //   const seed = require("./seed")(db)
+  //   seed.seedAdmin()
+  //   seed.seedCategories()
+  //   seed.seedSkills()
+  //   seed.seedUser()
+  // }
   // await db.user.create({email: 'test5@gd'})
 }
 
