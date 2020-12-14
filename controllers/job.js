@@ -1,7 +1,7 @@
 
 module.exports = (db) => {
   const User = db.user,
-        userFilter = db.userFilter,
+        UserFilter = db.userFilter,
         Skill = db.skill,
         Category = db.category,
         Job = db.job,
@@ -27,6 +27,19 @@ module.exports = (db) => {
       }
       if(req.query.tool){
         filter.tool = req.query.tool
+      }
+      if(filter != {}){
+        await User.update({
+          lastFiltered: filter
+        }, {
+          where: {
+            id: req.user.dataValues.id
+          }
+        })
+        await UserFilter.create({
+          ...filter,
+          user_id: req.user.dataValues.id
+        })
       }
       let jobs = await Job.findAll({
         where: filter
@@ -92,7 +105,7 @@ module.exports = (db) => {
       })
 
       let newApplication = {
-        user_id : req.user.id,
+        user_id : req.user.dataValues.id,
         job_id : req.params.id,
         answers: answers
       }
@@ -101,7 +114,7 @@ module.exports = (db) => {
 
       await User.increment('applicationCount', {
         where: {
-          id: req.user.id
+          id: req.user.dataValues.id
         }
       })
 

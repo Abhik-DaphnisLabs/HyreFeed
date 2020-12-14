@@ -25,11 +25,11 @@ module.exports = (sequelize) => {
       },
       stage: {
         type: DataTypes.INTEGER,     //1: Applied 2: Under Review 3: Shortlisted 4: Accepted/rejected
-        default: 1
+        defaultValue: 1
       },
       rejected: {
         type: DataTypes.BOOLEAN,
-        default: false
+        defaultValue: false
       },
       answers: {
         type: DataTypes.ARRAY(DataTypes.JSON)

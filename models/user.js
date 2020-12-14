@@ -113,6 +113,13 @@ module.exports = (sequelize) => {
       others: {
           type: DataTypes.JSONB
       }
+  }, {
+    indexes: [
+      {
+        unique: true,
+        fields: ['contactNumber']
+      },
+    ]
   });
   
 

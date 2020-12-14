@@ -13,7 +13,7 @@ module.exports = (db) => {
     let salt = "16578b93d0aca34aaa8ef4ea10c03ed25f291714c8cd474a0596a325c8802da7"
     
     await User.create({
-      "email": "anshuman@super",
+      "contactNumber": "+919876543000",
       "hash": hash,
       "salt": salt,
       role: {
@@ -25,7 +25,7 @@ module.exports = (db) => {
       }
     })
     await User.create({
-      "email": "anshuman@recruiter",
+      "contactNumber": "+919876543001",
       "hash": hash,
       "salt": salt,
       role: {
@@ -37,7 +37,7 @@ module.exports = (db) => {
       }
     })
     await User.create({
-      "email": "anshuman@screener",
+      "contactNumber": "+919876543010",
       "hash": hash,
       "salt": salt,
       role: {
@@ -110,7 +110,7 @@ module.exports = (db) => {
       }
     ]
     await User.create({
-      "email": "anshuman@atest1",
+      "contactNumber": "+919876543011",
       "hash": hash,
       "salt": salt,
       firstName: "Anshuman",
@@ -144,7 +144,7 @@ module.exports = (db) => {
       professionalDetails: professionalDetails,
     })
     await User.create({
-      "email": "anshuman@atest2",
+      "contactNumber": "+919876543100",
       "hash": hash,
       "salt": salt,
       firstName: "Satyam",
@@ -178,7 +178,7 @@ module.exports = (db) => {
       professionalDetails: professionalDetails,
     })
     await User.create({
-      "email": "anshuman@atest3",
+      "contactNumber": "+919876543101",
       "hash": hash,
       "salt": salt,
       firstName: "Tushar",

@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 const passport = require("passport")
+const https = require("https")
+require('dotenv').config()
+
 // const user = require('../models/user')
 
 
@@ -8,8 +11,9 @@ const passport = require("passport")
 
 
 module.exports = (db) => {
-  const user = db.user
+  const User = db.user
   const middleware = require("../middleware")(db)
+  
 
   // router.get("/", (req, res) => {
   //   const userDetails = {
@@ -18,18 +22,63 @@ module.exports = (db) => {
   //   delete userDetails.roles
   //   delete userDetails.hash
   //   delete userDetails.salt
+
   //   console.log(userDetails)
   //   res.json(userDetails)
   // })
 
-  router.post("/register", function(req, res){
+  async function checkOTP(req, res, next){
+    let url = "https://2factor.in/API/V1/"+process.env.OTP_API+"/SMS/VERIFY/"+req.body.sessionID+"/"+req.body.code
+    https.get(url, async (response) => {
+      response.on('data', (data) => {
+        let d = JSON.parse(data)
+        // console.log(d)
+        if(d.Details == "OTP Matched")
+          next()
+        else
+          res.status(403).json({
+            success: false,
+            message: "Incorrect OTP!"
+        })
+      })
+    })
+    // console.log(response)
+    
+  }
+
+
+  router.get("/sendOTP", async function(req, res){
+    console.log(process.env.OTP_API)
+    let contactNumber = req.query.contactNumber
+    let user = await User.findOne({
+      where: {
+        contactNumber: contactNumber
+      }
+    })
+    let url = "https://2factor.in/API/V1/"+process.env.OTP_API+"/SMS/"+contactNumber+"/AUTOGEN"
+    https.get(url, async (response) => {
+      response.on('data', (data) => {
+        res.json({
+          success: true,
+          response: JSON.parse(data),
+          isNewUser: user==null
+        })
+      })
+      
+    })
+
+    
+  })
+
+
+  router.post("/register", checkOTP, function(req, res){
     // console.log(req.body)
     const newUser = {
-      email: req.body.email,
+      contactNumber: req.body.contactNumber,
       // profileImageURL: 'https://via.placeholder.com/300x300',
       roles: {}
     }
-    user.register(newUser, req.body.password, function(err, user){
+    User.register(newUser, req.body.password, function(err, user){
         if(err){
           // console.log(JSON.stringify(err.parent))
           console.error("Error Occured", typeof(err), err)
@@ -41,7 +90,7 @@ module.exports = (db) => {
         console.log("Past error detection!")
         passport.authenticate("local")(req, res, function(){
             console.log("New user Added!")
-            console.log(user)
+            // console.log(user)
             res.json({
               success: true,
               message: "Registration Successful",
@@ -61,7 +110,7 @@ module.exports = (db) => {
     console.log(res)
   })
 */
-  router.post('/login', function(req, res, next) {
+  router.post('/login', checkOTP, function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
       if (err) {
          return res.json(err) 

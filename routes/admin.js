@@ -18,7 +18,7 @@ function isSuper(req, res, next) {
 
 function isRecruiter(req, res, next) {
   if (req.user.roles && (req.user.roles.superUser|| req.user.roles.recruiter)) {
-    console.log("is Recruiter")
+    // console.log("is Recruiter")
     next();
   } else {
     res.status(403).json({
@@ -70,6 +70,15 @@ module.exports = (db) => {
   router.post('/jobs/delete/:id', middleware.isLoggedIn, isRecruiter, upload.single('image'),adminController.deleteJob)
   
 
+  router.get('/jobs/:id/addVideo', middleware.isLoggedIn, isRecruiter, adminController.createVideo)
+  router.post('/jobs/:id/setVideo', middleware.isLoggedIn, isRecruiter, upload.none(), adminController.setVideo)
+  router.post('/jobs/:id/setVideoFile', middleware.isLoggedIn, isRecruiter, upload.single('video'), adminController.setVideoFile)
+  router.post('/jobs/:id/nextVideo', middleware.isLoggedIn, isRecruiter, upload.none(), adminController.setNextVideo)
+  router.get('/jobs/:id/allVideos', middleware.isLoggedIn, isRecruiter, adminController.getVideos)
+
+  router.get('/jobs/:id/applicationList', middleware.isLoggedIn, isRecruiter, adminController.applicationList)
+  router.post('/jobs/:id/applicationList/:app_id', middleware.isLoggedIn, isRecruiter, adminController.updateApplicationStage)
+  
 
   return router;
 }

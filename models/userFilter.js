@@ -33,10 +33,10 @@ module.exports = (sequelize) => {
       salary: {
           type: DataTypes.STRING,
       },
-      skills: {
+      skill: {
           type: DataTypes.STRING,
       },
-      tools: {
+      tool: {
           type: DataTypes.STRING,
       },
       

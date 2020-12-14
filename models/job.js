@@ -95,16 +95,16 @@ module.exports = (sequelize) => {
       },
       numberOfApplicants: {
         type: DataTypes.INTEGER,
-        default: 0
+        defaultValue: 0
       },
       status: {
         type: DataTypes.INTEGER,
-        default: 0
+        defaultValue: 0
         //1. Shared 2. Live 3. Closed
       },
       closeDate: {
         type: DataTypes.DATE,
-        default: Date.now()+2592000000
+        defaultValue: Date.now()+2592000000
       },
       others: {
           type: DataTypes.JSONB

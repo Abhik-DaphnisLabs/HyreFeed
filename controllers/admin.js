@@ -57,7 +57,7 @@ module.exports = (db) => {
 
   adminController.addUser = async function(req, res, next){
     const newUser = {
-      email: req.body.email,
+      contactNumber: req.body.contactNumber,
       // profileImageURL: 'https://via.placeholder.com/300x300',
       roles: {
         superUser: req.body.isSuperUser=='true',
@@ -296,6 +296,7 @@ module.exports = (db) => {
     }
   }
   adminController.setVideoFile = async function(req, res, next){
+    // console.log(req.file)
     try {
       let jobVideo = await JobVideo.update({
         filename: req.file.filename
@@ -341,7 +342,7 @@ module.exports = (db) => {
     try {
       let jobVideos = await JobVideo.findAll({
         where: {
-          job_id: req.body.id
+          job_id: req.params.id
         }
       });
       res.json({
@@ -383,7 +384,7 @@ module.exports = (db) => {
         rejected: req.body.rejected
       },{
         where: {
-          id: req.body.id,
+          id: req.params.app_id,
         }
       })
 

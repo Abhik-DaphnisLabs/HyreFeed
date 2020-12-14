@@ -78,8 +78,9 @@ module.exports = (db) => {
 
   userController.addBookmark = async function (req, res, next) {
     try {
+      // console.log(req.user.dataValues.id, req.query.jobID)
       await BookmarkedJob.create({
-        user_id: req.user.id,
+        user_id: req.user.dataValues.id,
         job_id: req.query.jobID
       })
       res.json({
@@ -97,7 +98,7 @@ module.exports = (db) => {
     try {
       let bookmarks = await BookmarkedJob.findAll({
         where: {
-          user_id: req.user.id
+          user_id: req.user.dataValues.id
         }
       })
       res.json({
@@ -116,7 +117,7 @@ module.exports = (db) => {
     try {
       await BookmarkedJob.destroy({
         where: {
-          user_id: req.user.id,
+          user_id: req.user.dataValues.id,
           job_id: req.query.jobID
         }
       })
@@ -136,7 +137,7 @@ module.exports = (db) => {
     try {
       let appliedJobs = await AppliedJob.findAll({
         where: {
-          user_id: req.user.id
+          user_id: req.user.dataValues.id
         }
       })
       res.json({

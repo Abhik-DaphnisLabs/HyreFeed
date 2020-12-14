@@ -34,6 +34,7 @@ const db = {
   job: require("./models/job")(sequelize),
   jobVideo: require("./models/jobVideo")(sequelize),
   appliedJob: require("./models/appliedJob")(sequelize),
+  bookmarkedJob: require("./models/bookmarkedJob")(sequelize),
   // userCertification: require("./models/userCertification")(sequelize),
   // userEducation: require("./models/userEducation")(sequelize),
   userFilter: require("./models/userFilter")(sequelize),
@@ -57,7 +58,8 @@ const indexRoutes     = require('./routes/index')(db),
       adminRoutes     = require('./routes/admin')(db),
       userRoutes      = require('./routes/user')(db),
       skillRoutes     = require('./routes/skill')(db),
-      categoryRoutes     = require('./routes/category')(db)
+      categoryRoutes     = require('./routes/category')(db),
+      jobRoutes     = require('./routes/job')(db)
 
 
 
@@ -70,7 +72,7 @@ app.use(bodyParser.json())
 
  //PASSPORT CONFIG
 LocalStrategySequelize.attachToUser(db.user, {
-  usernameField: 'email',
+  usernameField: 'contactNumber',
   hashField: 'hash',
   saltField: 'salt'
 });
@@ -94,13 +96,13 @@ const syncDB = async () => {
   let isForced = false
   await sequelize.authenticate()
   await sequelize.sync({force:isForced})
-  // if(isForced){
-  //   const seed = require("./seed")(db)
-  //   seed.seedAdmin()
-  //   seed.seedCategories()
-  //   seed.seedSkills()
-  //   seed.seedUser()
-  // }
+  if(isForced){
+    const seed = require("./seed")(db)
+    seed.seedAdmin()
+    seed.seedCategories()
+    seed.seedSkills()
+    seed.seedUser()
+  }
   // await db.user.create({email: 'test5@gd'})
 }
 
@@ -117,6 +119,7 @@ app.use("/admin", adminRoutes)
 app.use("/user", userRoutes)
 app.use("/skill", skillRoutes)
 app.use("/category", categoryRoutes)
+app.use("/job", jobRoutes)
 
 
 if(process.env.PORT)
