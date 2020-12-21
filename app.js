@@ -51,6 +51,10 @@ const   express                   = require("express"),
         // methodOverride         = require("method-override"),
         passport                  = require("passport"),
         LocalStrategySequelize    = require("passport-local-sequelize")
+        cors                      = require('cors')
+
+ 
+
 
 
 //ROUTES
@@ -66,7 +70,7 @@ const indexRoutes     = require('./routes/index')(db),
 //MIDDLEWAREs
 app.use(express.static('public'));
 app.use(express.static('uploads'));
-
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
