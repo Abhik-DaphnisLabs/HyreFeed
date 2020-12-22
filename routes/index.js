@@ -71,7 +71,7 @@ module.exports = (db) => {
   })
 
 
-  router.post("/register", checkOTP, function(req, res){
+  router.post("/register", function(req, res){
     // console.log(req.body)
     const newUser = {
       contactNumber: req.body.contactNumber,
