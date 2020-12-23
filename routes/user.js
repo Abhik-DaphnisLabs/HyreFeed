@@ -45,7 +45,7 @@ module.exports = (db) => {
   router.get("/bookmarks/delete", middleware.isLoggedIn, userController.deleteBookmark)
 
   router.get("/application/all", middleware.isLoggedIn, userController.getAppliedList)
-
+  router.get("/allUsers",middleware.isLoggedIn,userController.getAllUsers);
 
   return router;
 }
