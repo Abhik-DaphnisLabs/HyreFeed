@@ -110,7 +110,7 @@ module.exports = (db) => {
     console.log(res)
   })
 */
-  router.post('/login', checkOTP, function(req, res, next) {
+  router.post('/login', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
       if (err) {
          return res.json(err) 
