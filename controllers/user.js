@@ -153,6 +153,22 @@ module.exports = (db) => {
     }
   }
 
+  userController.getAllUsers=async(req,res)=>{
+    try{
+      let allUsers=await User.findAll();
+      res.json({
+        success: true,
+        allUsers,
+      });
+    }
+    catch(error){
+      res.json({
+        success: false,
+        error: error
+      });
+    }
+  }
+
   
 
   
